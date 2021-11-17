@@ -52,7 +52,13 @@ class Drawer(
                 chineseBean.pathStr = this
 
             }
+            ComponentType.CYCLE ->{
+                //TODO fix
+                chineseBean = ChineseBean(WorkType.CHINESE,ComponentType.PATH)
+                chineseBean.pathStr = this
+            }
         }
+
 
 
 

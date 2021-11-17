@@ -30,25 +30,62 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
 
             layer(canvas = canvas,height,width) {
+
+
+
+
                 painters {
+
+
                     "invoke"{
                         invokePaint.color = Color.RED
                         invokePaint.textSize = 50f
                         invokePaint.textAlign = Paint.Align.CENTER;
                         invokePaint
                     }
-                    addPaint("rarcher",paint)
-                }
-                component {
 
+
+
+
+
+                    addPaint("rarcher",paint)
+
+
+                }
+
+
+
+
+
+
+
+                component {
+                    initPath()
                     text("hello","Hello World")
+
+
                     text("designed","by Rarcher")
+
+                    /*
+                    *
+                    * //@Preview  预览
+                    *
+                    *
+                    * */
+
 
                 }
                 drawer {
 
                     "hello" 画在 位置.正中 使用画笔 "invoke"
+
                     "designed" 画在 位置.右下角 右边距 300f 下边距 20f 使用画笔 "rarcher"
+
+                    /*
+                    *
+                    * "hello" 画在 "designed" 右边 左边距 50f 上边距 200f  使用画笔 "rarcher"    //relative
+                    *
+                    * */
 
                 }
 

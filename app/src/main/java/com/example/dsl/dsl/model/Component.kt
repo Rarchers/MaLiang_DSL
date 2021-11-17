@@ -1,6 +1,7 @@
 package com.example.dsl.dsl.model
 
 import android.graphics.Path
+import com.example.dsl.dsl.bean.componentbean.CycleComponentBean
 import com.example.dsl.dsl.bean.componentbean.FreeComponentBean
 import com.example.dsl.dsl.bean.componentbean.PathBean
 import com.example.dsl.dsl.bean.componentbean.TextComponentBean
@@ -30,6 +31,13 @@ class Component(private val pathMap : HashMap<String, PathBean>){
         }
     }
 
+
+    fun cycle(id:String,r:Float,positionX:Float = 0f,positionY:Float = 0f){
+        pathMap[id] = CycleComponentBean(type = ComponentType.CYCLE,r).also{
+            it.positionX = positionX
+            it.positionY = positionY
+        }
+    }
 
     operator fun invoke(block : Component.()->Unit){
         block()
