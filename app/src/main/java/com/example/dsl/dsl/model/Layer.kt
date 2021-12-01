@@ -30,6 +30,8 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
     private val TAG = "Layer"
 
 
+
+
     fun painters(init : PainterCustom.()->Unit) {
         initTag(painter,init)
     }

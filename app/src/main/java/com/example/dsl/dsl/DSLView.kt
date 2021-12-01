@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import com.example.dsl.dsl.emun.位置
 import com.example.dsl.dsl.utils.layer
+import dsl.main
 
 class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val backgroundHeight = 500
@@ -31,37 +32,24 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             layer(canvas = canvas,height,width) {
 
-
-
-
                 painters {
-
-
                     "invoke"{
                         invokePaint.color = Color.RED
                         invokePaint.textSize = 50f
                         invokePaint.textAlign = Paint.Align.CENTER;
                         invokePaint
                     }
-
-
-
-
-
+                    "painters".painter {
+                        paint2.color = Color.BLACK
+                        paint2
+                    }
                     addPaint("rarcher",paint)
-
-
                 }
-
-
-
-
-
-
 
                 component {
                     initPath()
                     text("hello","Hello World")
+
 
 
                     text("designed","by Rarcher")
