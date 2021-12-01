@@ -13,7 +13,7 @@
 
 ## MaLiang 框架结构
 
-# UI绘制版本
+### UI绘制版本
 ``` kotlin
   layer(canvas = canvas,height,width) {
         painters {
@@ -33,7 +33,7 @@ painters：画笔初始化
 component： 组件定义，在这里完成每个独立小组件的路径绘制或者声明所需的文本
 drawer： 布局区，在这里指定组件在布局中放置的位置，以及使用的画笔
 
-# 预览版本
+### 预览版本
  注意：使用预览请独立创建一个main方法，并将代码放在main方法里，同时需要引入DSL.jar包
 ``` kotlin
    previewLayer {
@@ -53,7 +53,7 @@ drawer： 布局区，在这里指定组件在布局中放置的位置，以及�
  
  ## 使用样例
  
- # UI绘制版本
+ ### UI绘制版本
  ``` kotlin
  
       layer(canvas = canvas,height,width) {
@@ -96,7 +96,7 @@ drawer： 布局区，在这里指定组件在布局中放置的位置，以及�
  1. 传统方法调用：drawComponent(idPaint: String, idComponent: String) 需要提供画笔id和组件id，（注意，如果组件未指定position，将会默认绘制在0，0坐标，即传统帧布局）
  2. DSL特有调用：  "designed" 画在 位置.右下角 右边距 300f 下边距 20f 使用画笔 "rarcher" 按照正常书写方式进行描述组件绘制的位置以及使用的画笔即可
  
- # 预览版本
+ ### 预览版本
  
   ``` kotlin
     previewLayer {
