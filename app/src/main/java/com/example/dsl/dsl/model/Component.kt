@@ -32,8 +32,8 @@ class Component(private val pathMap : HashMap<String, PathBean>){
     }
 
 
-    fun cycle(id:String,r:Float,positionX:Float = 0f,positionY:Float = 0f){
-        pathMap[id] = CycleComponentBean(type = ComponentType.CYCLE,r).also{
+    fun circle(id:String,r:Float,positionX:Float = 0f,positionY:Float = 0f){
+        pathMap[id] = CycleComponentBean(type = ComponentType.CIRCLE,r).also{
             it.positionX = positionX
             it.positionY = positionY
         }

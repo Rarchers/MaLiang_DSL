@@ -5,10 +5,7 @@ import android.graphics.Paint
 import android.util.Log
 import android.widget.Toast
 import com.example.dsl.dsl.bean.componentbean.PathBean
-import com.example.dsl.dsl.bean.workbean.ChineseBean
-import com.example.dsl.dsl.bean.workbean.FreePathBean
-import com.example.dsl.dsl.bean.workbean.TextBean
-import com.example.dsl.dsl.bean.workbean.WorkBean
+import com.example.dsl.dsl.bean.workbean.*
 import com.example.dsl.dsl.emun.ComponentType
 import com.example.dsl.dsl.emun.WorkType
 
@@ -81,6 +78,16 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                             }
                         }
 
+                        ComponentType.CIRCLE ->{
+                            val bean = work as CycleBean
+                            if (bean.r != 0f){
+                                canvas.save()
+                                canvas.translate(bean.positionX,bean.positionY)
+                                canvas.drawCircle(0f,0f,bean.r,bean.paint)
+                                canvas.restore()
+                            }
+                        }
+
 
                     }
                 }
@@ -117,8 +124,14 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                             }
                         }
 
-                        else ->{
-                            throw Exception("core 初始化有误")
+                        ComponentType.CIRCLE ->{
+                            val bean = core as CycleBean
+                            if (bean.r != 0f){
+                                canvas.save()
+                                canvas.translate(bean.positionX,bean.positionY)
+                                canvas.drawCircle(0f,0f,bean.r,bean.paint)
+                                canvas.restore()
+                            }
                         }
                     }
 

@@ -11,7 +11,7 @@ import android.util.Log
 import android.view.View
 import com.example.dsl.dsl.emun.位置
 import com.example.dsl.dsl.utils.layer
-import dsl.main
+
 
 class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val backgroundHeight = 500
@@ -54,13 +54,7 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                     text("designed","by Rarcher")
 
-                    /*
-                    *
-                    * //@Preview  预览
-                    *
-                    *
-                    * */
-
+                    circle("circle",50f)
 
                 }
                 drawer {
@@ -68,6 +62,8 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     "hello" 画在 位置.正中 使用画笔 "invoke"
 
                     "designed" 画在 位置.右下角 右边距 300f 下边距 20f 使用画笔 "rarcher"
+
+                    "circle" 画在 位置.垂直居中 左边距 200f 使用画笔  "painters"
 
                     /*
                     *

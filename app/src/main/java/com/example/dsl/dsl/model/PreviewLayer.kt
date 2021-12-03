@@ -1,5 +1,6 @@
 package com.example.dsl.dsl.model
 
+import com.example.dsl.dsl.bean.componentbean.CycleComponentBean
 import com.example.dsl.dsl.bean.componentbean.PathBean
 import com.example.dsl.dsl.bean.componentbean.TextComponentBean
 import com.example.dsl.dsl.emun.ComponentType
@@ -38,8 +39,9 @@ class PreviewLayer {
                 ComponentType.PATH ->{
 
                 }
-                ComponentType.CYCLE ->{
-
+                ComponentType.CIRCLE ->{
+                    val work = bean as CycleComponentBean
+                    DSLPreview().drawCircle(work.r)
                 }
             }
 
