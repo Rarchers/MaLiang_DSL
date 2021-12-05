@@ -5,7 +5,7 @@ import com.example.dsl.dsl.bean.componentbean.PathBean
 import com.example.dsl.dsl.bean.componentbean.TextComponentBean
 import com.example.dsl.dsl.emun.ComponentType
 import com.example.dsl.dsl.utils.initTag
-import dsl.DSLPreview
+//import dsl.DSLPreview
 
 class PreviewLayer {
 
@@ -34,14 +34,14 @@ class PreviewLayer {
             when(bean.type){
                 ComponentType.TEXT ->{
                     val work = bean as TextComponentBean
-                    DSLPreview().drawText(work.text)
+                  //  DSLPreview().drawText(work.text)
                 }
                 ComponentType.PATH ->{
 
                 }
                 ComponentType.CIRCLE ->{
                     val work = bean as CycleComponentBean
-                    DSLPreview().drawCircle(work.r)
+                 //   DSLPreview().drawCircle(work.r)
                 }
             }
 

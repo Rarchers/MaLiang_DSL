@@ -11,7 +11,7 @@ class CycleBean (
     val paint: Paint,
     val positionX: Float = 0f,
     val positionY: Float = 0f,
-    val height: Float? = null,
-    val width: Float? = null
+    override val BeanHeight: Float? = null,
+    override val BeanWidth: Float? = null
 ) : WorkBean(type, component) {
 }

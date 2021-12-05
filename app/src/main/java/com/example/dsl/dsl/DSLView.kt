@@ -2,15 +2,27 @@ package com.example.dsl.dsl
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import com.example.dsl.R
 import com.example.dsl.dsl.emun.位置
 import com.example.dsl.dsl.utils.layer
+
+
+
+/**
+*
+* Relative Layout：
+ * 1. 新增更多绘制描述
+ * 2. 更多的放置测试，目前已经完成 圆的相对布局测试
+*
+*
+* */
+
+
 
 
 class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -25,9 +37,14 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     val invokePaint = Paint()
     val warringPath = Path()
 
+
+
+
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (canvas != null) {
+
 
 
             layer(canvas = canvas,height,width) {
@@ -50,26 +67,27 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     initPath()
                     text("hello","Hello World")
 
-
+                    picture("picture", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.icon),100f,100f)
 
                     text("designed","by Rarcher")
 
-                    circle("circle",50f)
+                    circle("circle",10f)
 
                 }
                 drawer {
 
-                    "hello" 画在 位置.正中 使用画笔 "invoke"
+                  //  "hello" 画在 位置.正中 使用画笔 "invoke"
 
                     "designed" 画在 位置.右下角 右边距 300f 下边距 20f 使用画笔 "rarcher"
 
-                    "circle" 画在 位置.垂直居中 左边距 200f 使用画笔  "painters"
+                    "circle" 画在 位置.正中  使用画笔  "painters"
 
-                    /*
-                    *
-                    * "hello" 画在 "designed" 右边 左边距 50f 上边距 200f  使用画笔 "rarcher"    //relative
-                    *
-                    * */
+                    "picture" 画在 位置.水平居中 上边距 500f 使用画笔 "invoke"
+
+
+
+                //     "circle" 画在 "designed" 左边 300f 使用画笔 "rarcher"    //relative 实验性 当前API已完成
+
 
                 }
 

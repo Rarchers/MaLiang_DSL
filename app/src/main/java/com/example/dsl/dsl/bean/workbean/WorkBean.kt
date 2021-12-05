@@ -8,6 +8,7 @@ import com.example.dsl.dsl.emun.WorkType
 
 open class WorkBean(
     open val type : WorkType,
-    open val component : ComponentType
-
+    open val component : ComponentType,
+    open val BeanHeight: Float? = null,
+    open val BeanWidth: Float? = null
 )

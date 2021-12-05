@@ -1,7 +1,6 @@
 package com.example.dsl.dsl.model
 
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
 import android.util.Log
 import android.widget.Toast
 import com.example.dsl.dsl.bean.componentbean.PathBean
@@ -16,7 +15,13 @@ import kotlin.collections.HashMap
 
 class Layer(val canvas: Canvas,val height:Int,val width:Int){
 
-    private val painterMap = HashMap<String,Paint>()
+    private val painterMap = HashMap<String,Paint>().also {
+        val paint = Paint()
+        paint.color = Color.RED
+        paint.textSize = 50f
+        paint.textAlign = Paint.Align.CENTER;
+        it["default"] = paint
+    }
     private val pathMap = HashMap<String, PathBean>()
     private val workQueue : ArrayDeque<WorkBean> = ArrayDeque()
     private val painter = PainterCustom(painterMap)
@@ -50,8 +55,6 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
             val work = workQueue.removeFirst()
             when(work.type){
                 WorkType.FREE ->{
-
-
                     when(work.component){
                         ComponentType.PATH ->{
                             val bean = work as FreePathBean
@@ -87,6 +90,8 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                                 canvas.restore()
                             }
                         }
+
+
 
 
                     }
@@ -133,6 +138,21 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                                 canvas.restore()
                             }
                         }
+
+                        ComponentType.PICTURE ->{
+                            val bean = core as PictureBean
+                            canvas.save()
+                            canvas.translate(bean.positionX,bean.positionY)
+                            if (bean.BeanHeight != null && bean.BeanWidth != null){
+                                canvas.drawBitmap(bean.bitmap,null, RectF(0f,0f, bean.BeanWidth,bean.BeanHeight),bean.paint)
+                            }else{
+                                canvas.drawBitmap(bean.bitmap,0f,0f,bean.paint)
+                            }
+                            canvas.restore()
+
+                        }
+
+
                     }
 
 
@@ -141,26 +161,6 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-                WorkType.COLUMN ->{
-
-                }
-                WorkType.ROW ->{
-
-                }
-                WorkType.FRAME ->{
-
-                }
             }
         }
     }

@@ -12,6 +12,8 @@ class TextBean(
     val textPath: Path? = null,
     val textPositionY: Float = 0f,
     val textPositionX: Float = 0f,
+    override val BeanHeight: Float? = null,
+    override val BeanWidth: Float? = null
 ) : WorkBean(type, component) {
     override fun toString(): String {
         return "text $text path $textPath paint $paint x $textPositionX y $textPositionY"
