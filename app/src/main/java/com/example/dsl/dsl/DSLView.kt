@@ -52,8 +52,7 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 painters {
                     "invoke"{
                         invokePaint.color = Color.RED
-                        invokePaint.textSize = 50f
-                        invokePaint.textAlign = Paint.Align.CENTER;
+                        invokePaint.textSize = 30f
                         invokePaint
                     }
                     "painters".painter {
@@ -64,31 +63,45 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 }
 
                 component {
-                    initPath()
-                    text("hello","Hello World")
+
+                    text("relative","相对布局测试")
 
                     picture("picture", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.icon),100f,100f)
 
-                    text("designed","by Rarcher")
+                    text("designed","文字基准测试")
 
-                    circle("circle",10f)
+                    circle("center_circle",10f)
+
 
                 }
                 drawer {
 
-                  //  "hello" 画在 位置.正中 使用画笔 "invoke"
+                   // "relative" 画在 位置.正中 使用画笔 "invoke"
 
-                    "designed" 画在 位置.右下角 右边距 300f 下边距 20f 使用画笔 "rarcher"
+                    "designed" 画在 位置.垂直居中 右边距 1f 使用画笔 "default"
 
-                    "circle" 画在 位置.正中  使用画笔  "painters"
+                    "picture" 画在 位置.水平居中 使用画笔 "invoke"
+                    /**
+                    *   定位测试
+                     *  已完成 ： 文本 圆圈  图片
+                     * */
+                    "center_circle" 画在 位置.右上角 使用画笔 "invoke"
+                    "center_circle" 画在 位置.左上角 使用画笔 "invoke"
+                    "center_circle" 画在 位置.右下角 使用画笔 "invoke"
+                    "center_circle" 画在 位置.左下角 使用画笔 "invoke"
+                    "center_circle" 画在 位置.正中 使用画笔 "invoke"
+                    "center_circle" 画在 位置.垂直居中 右边距 1f 使用画笔 "invoke"
+                    "center_circle" 画在 位置.垂直居中 使用画笔 "invoke"
+                    "center_circle" 画在 位置.垂直居中 左边距 50f 使用画笔 "invoke"
+                    "center_circle" 画在 位置.垂直居中 右边距 50f 使用画笔 "invoke"
+                    "center_circle" 画在 位置.水平居中 使用画笔 "invoke"
+                    "center_circle" 画在 位置.水平居中 下边距 1f 使用画笔 "invoke"
+                    "center_circle" 画在 位置.水平居中 上边距 50f 使用画笔 "invoke"
+                    "center_circle" 画在 位置.水平居中 下边距 50f 使用画笔 "invoke"
 
-                    "picture" 画在 位置.水平居中 上边距 500f 使用画笔 "invoke"
+                     "picture" 画在 "designed" 左边 0f 使用画笔 "rarcher"    //relative 实验性 当前API已完成
 
-
-
-                //     "circle" 画在 "designed" 左边 300f 使用画笔 "rarcher"    //relative 实验性 当前API已完成
-
-
+                    "center_circle" 画在 位置.正中  使用画笔  "painters" // 中心定位点
                 }
 
             }

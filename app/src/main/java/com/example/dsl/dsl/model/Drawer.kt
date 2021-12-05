@@ -3,6 +3,7 @@ package com.example.dsl.dsl.model
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PathMeasure
+import android.graphics.Rect
 import android.util.Log
 import com.example.dsl.dsl.bean.componentbean.*
 import com.example.dsl.dsl.bean.workbean.*
@@ -10,6 +11,7 @@ import com.example.dsl.dsl.emun.ComponentType
 import com.example.dsl.dsl.emun.WorkType
 import com.example.dsl.dsl.emun.位置
 import java.lang.Exception
+import kotlin.math.abs
 
 
 class Drawer(
@@ -57,13 +59,10 @@ class Drawer(
                 relativeBean.BeanHeight = (pathMap[this]!! as CycleComponentBean).r*2
             }
             ComponentType.PICTURE ->{
-                //TODO  需要修改
-                relativeBean = RelativeBean(WorkType.CHINESE,ComponentType.CIRCLE)
+                relativeBean = RelativeBean(WorkType.CHINESE,ComponentType.PICTURE)
                 relativeBean.pathStr = this
-                relativeBean.BeanWidth = (pathMap[this]!! as CycleComponentBean).r*2
-                relativeBean.BeanHeight = (pathMap[this]!! as CycleComponentBean).r*2
-
-
+                relativeBean.BeanWidth = (pathMap[this]!! as PictureComponentBean).width
+                relativeBean.BeanHeight = (pathMap[this]!! as PictureComponentBean).height
             }
         }
         relativeBean.relativeId = pathId
@@ -90,12 +89,27 @@ class Drawer(
 
                     ComponentType.TEXT ->{
                         val bean = core as TextBean
+
+
+
                         if (this.BeanWidth == null){
                             this.positionX = bean.textPositionX-left
                         }else{
-                            this.positionX = bean.textPositionX- this.BeanWidth!!-left
+                            when (this.component) {
+                                ComponentType.TEXT,ComponentType.PICTURE -> {
+                                    this.positionX = bean.textPositionX - bean.BeanWidth!!/2 - this.BeanWidth!!-left
+                                }
+                                ComponentType.CIRCLE -> {
+                                    this.positionX = bean.textPositionX - bean.BeanWidth!!/2 - this.BeanWidth!!/2-left
+                                }
+                                else -> {
+                                    this.positionX = bean.textPositionX - bean.BeanWidth!!/2 - this.BeanWidth!!-left
+                                }
+                            }
+
+
                         }
-                        this.positionY = 0f
+                        this.positionY = height/2*1f
 
                     }
 
@@ -105,6 +119,18 @@ class Drawer(
                             this.positionX = bean.positionX-left
                         }else{
                             this.positionX = bean.positionX - this.BeanWidth!!-bean.r-left
+                        }
+                        this.positionY = 0f
+                    }
+
+                    ComponentType.PICTURE ->{
+                        val bean = core as PictureBean
+                        Log.e(TAG, "左边: beanwidth ${this.BeanWidth}" )
+                        if (this.BeanWidth == null){
+                            this.positionX = bean.positionX - left
+                        }else{
+                            Log.e(TAG, "左边: beanPositionX ${bean.positionX}  thisBeanwidth ${this.BeanWidth}")
+                            this.positionX = bean.positionX-this.BeanWidth!!-left
                         }
                         this.positionY = 0f
                     }
@@ -161,6 +187,15 @@ class Drawer(
                     chineseBean.core = cyclePacket(WorkType.FREE,it,paintId)
                 }
             }
+
+            ComponentType.PICTURE ->{
+                val bean = (pathMap[this.pathStr]!! as PictureComponentBean)
+                bean.let {
+                    it.positionX = this.positionX
+                    it.positionY = this.positionY
+                    chineseBean.core = picPacket(WorkType.FREE,it,paintId)
+                }
+            }
         }
         coreMap[this.pathStr] = chineseBean
         workQueue.add(chineseBean)
@@ -197,10 +232,6 @@ class Drawer(
                 chineseBean.pathStr = this
             }
         }
-
-
-
-
         when(放置位置){
             位置.左上角 ->{
                 chineseBean.place = 位置.左上角
@@ -233,11 +264,7 @@ class Drawer(
 
 
   /*
-
   TODO 暂时禁用 等待做一个移动序列
-
-
-
    infix fun ChineseBean.左移(left : Float) : ChineseBean{
         this.leftEdg = this.leftEdg-left
         return this
@@ -298,71 +325,81 @@ class Drawer(
         when (pathMap[this.pathStr]!!.type) {
             ComponentType.TEXT ->{
                 //文字绘制
+                painterMap[paintId]!!.textAlign = Paint.Align.CENTER
                 val bean = pathMap[this.pathStr]!! as TextComponentBean
+                val forFontMetrics = painterMap[paintId]!!.fontMetrics;
+                val textWidth = painterMap[paintId]!!.measureText(bean.text)
+                val bounds = Rect()
+                painterMap[paintId]!!.getTextBounds(bean.text,0, bean.text.length,bounds)
                 bean.let {
                     when(this.place){
-
                         位置.水平居中 ->{
-                            it.textPositionX = width*1f/2
+                            it.textPositionX = (width)*1f/2
                             if (this.bottomEdg == 0f){
                                 if (this.topEdge == 0f){
-                                    it.textPositionY = 0f
+                                    it.textPositionY = 0f + abs(forFontMetrics.top)
                                 }else{
-                                    it.textPositionY = 0f+this.topEdge
+                                    it.textPositionY = 0f+this.topEdge  + abs(forFontMetrics.top)
                                 }
                             }else{
-                                if (this.topEdge == 0f){
-                                    it.textPositionY = height - this.bottomEdg
+                                if (this.bottomEdg == 1f){
+                                    if (this.topEdge == 0f){
+                                        it.textPositionY = height - abs(forFontMetrics.bottom)
+                                    }else{
+                                        it.textPositionY = height - abs(forFontMetrics.bottom)
+                                    }
                                 }else{
-                                    it.textPositionY = height - this.bottomEdg
+                                    if (this.topEdge == 0f){
+                                        it.textPositionY = height - this.bottomEdg  - abs(forFontMetrics.bottom)
+                                    }else{
+                                        it.textPositionY = height - this.bottomEdg  - abs(forFontMetrics.bottom)
+                                    }
                                 }
+
+
                             }
                         }
-
                         位置.垂直居中 ->{
-                            it.textPositionX =  if (this.rightEdg != 0f) (width - this.rightEdg) else this.leftEdg
-
-
 
                             if (this.leftEdg == 0f){
                                 if (this.rightEdg == 0f){
-                                    it.textPositionX = 0f
+                                    it.textPositionX = 0f + textWidth/2
                                 }else{
-                                    it.textPositionX = width - this.rightEdg
+                                    if (rightEdg == 1f){
+                                        it.textPositionX = width - textWidth/2
+                                    }else{
+                                        it.textPositionX = width - this.rightEdg - textWidth/2
+                                    }
                                 }
                             }else{
                                 if (this.rightEdg == 0f){
-                                    it.textPositionX = this.leftEdg
+                                    it.textPositionX = 0f + this.leftEdg + textWidth/2
                                 }else{
-                                    it.textPositionX = this.leftEdg
+                                    it.textPositionX = 0f + this.leftEdg + textWidth/2
                                 }
                             }
-                            it.textPositionY = height*1f/2
+                            it.textPositionY = (height-((forFontMetrics.top + forFontMetrics.bottom)/2-forFontMetrics.bottom))*1f/2
                         }
-
                         位置.左上角 ->{
-                            it.textPositionX = 0f + this.leftEdg
-                            it.textPositionY = 0f + this.topEdge
+                            it.textPositionX = 0f + this.leftEdg + textWidth/2
+                            it.textPositionY = 0f + this.topEdge + abs(forFontMetrics.top)
                         }
                         位置.右上角->{
-                            it.textPositionX = width - this.rightEdg
-                            it.textPositionY = 0f + this.topEdge
+                            it.textPositionX = width - this.rightEdg  - textWidth/2
+                            it.textPositionY = 0f + this.topEdge + abs(forFontMetrics.top)
                         }
                         位置.左下角->{
-                            it.textPositionX = 0 + this.leftEdg
-                            it.textPositionY = height - this.bottomEdg
+                            it.textPositionX = 0 + this.leftEdg + textWidth/2
+                            it.textPositionY = height - this.bottomEdg- forFontMetrics.bottom
                         }
-
                         位置.右下角 ->{
-                            it.textPositionX = width - this.rightEdg
-                            it.textPositionY = height - this.bottomEdg
+                            it.textPositionX = width - this.rightEdg - textWidth/2
+                            it.textPositionY = height - this.bottomEdg - forFontMetrics.bottom
                         }
-
                         位置.正中 ->{
-                            it.textPositionX = width*1f/2
-                            it.textPositionY = height*1f/2
+                            it.textPositionX = (width)*1f/2
+                            it.textPositionY = (height-((forFontMetrics.top + forFontMetrics.bottom)/2-forFontMetrics.bottom))*1f/2
                         }
-
                     }
                     this.core =  textPacket(WorkType.FREE, it, paintId)
                 }
@@ -445,7 +482,7 @@ class Drawer(
                     when(this.place){
                         位置.水平居中 ->{
                             it.positionX = width*1f/2
-                            if (this.bottomEdg == 0f){
+                           /* if (this.bottomEdg == 0f){
                                 if (this.topEdge == 0f){
                                     it.positionY = 0f
                                 }else{
@@ -457,41 +494,71 @@ class Drawer(
                                 }else{
                                     it.positionY = height - this.bottomEdg
                                 }
+                            }*/
+                            if (this.topEdge != 0f && this.topEdge != 1f){
+                                it.positionY = 0f + this.topEdge + it.r
+                            }else{
+                                if (this.bottomEdg != 0f && this.bottomEdg!= 1f){
+                                    it.positionY = height - this.bottomEdg - it.r
+                                }else{
+                                    if (this.bottomEdg == 1f){
+                                        it.positionY = height - it.r
+                                    }else{
+                                        it.positionY = 0f+it.r
+                                    }
+                                }
                             }
+
+
                         }
 
                         位置.垂直居中 ->{
-                            if (this.leftEdg == 0f){
-                                if (this.rightEdg == 0f){
-                                    it.positionX = 0f
-                                }else{
-                                    it.positionX = width - this.rightEdg
-                                }
+//                            if (this.leftEdg == 0f){
+//                                if (this.rightEdg == 0f){
+//                                    it.positionX = 0f
+//                                }else{
+//                                    it.positionX = width - this.rightEdg
+//                                }
+//                            }else{
+//                                if (this.rightEdg == 0f){
+//                                    it.positionX = this.leftEdg
+//                                }else{
+//                                    it.positionX = this.leftEdg
+//                                }
+//                            }
+
+                            if (this.leftEdg != 0f && this.leftEdg != 1f){
+                                it.positionX = 0f + this.leftEdg + it.r
                             }else{
-                                if (this.rightEdg == 0f){
-                                    it.positionX = this.leftEdg
+                                if (this.rightEdg != 0f && this.rightEdg != 1f){
+                                    it.positionX = width - this.rightEdg - it.r
                                 }else{
-                                    it.positionX = this.leftEdg
+                                    if (this.rightEdg == 1f){
+                                        it.positionX = width - it.r
+                                    }else{
+                                        it.positionX = 0f + it.r
+                                    }
                                 }
                             }
+
                             it.positionY = height*1f/2
                         }
                         位置.左上角 ->{
-                            it.positionX = 0f + this.leftEdg
-                            it.positionY = 0f + this.topEdge
+                            it.positionX = 0f + this.leftEdg + it.r
+                            it.positionY = 0f + this.topEdge + it.r
                         }
                         位置.右上角->{
-                            it.positionX = width - this.rightEdg
-                            it.positionY = 0f + this.topEdge
+                            it.positionX = width - this.rightEdg - it.r
+                            it.positionY = 0f + this.topEdge + it.r
                         }
                         位置.左下角->{
-                            it.positionX = 0 + this.leftEdg
-                            it.positionY = height - this.bottomEdg
+                            it.positionX = 0 + this.leftEdg + it.r
+                            it.positionY = height - this.bottomEdg - it.r
                         }
 
                         位置.右下角 ->{
-                            it.positionX = width - this.rightEdg
-                            it.positionY = height - this.bottomEdg
+                            it.positionX = width - this.rightEdg - it.r
+                            it.positionY = height - this.bottomEdg - it.r
                         }
 
                         位置.正中 ->{
@@ -509,19 +576,52 @@ class Drawer(
                     when(this.place){
                         位置.水平居中 ->{
                             it.positionX = (width-it.width)*1f/2
-                            if (this.bottomEdg == 0f){
+
+                            /*if (this.bottomEdg == 0f){
                                 if (this.topEdge == 0f){
                                     it.positionY = 0f
                                 }else{
                                     it.positionY = 0f+this.topEdge
                                 }
                             }else{
-                                if (this.topEdge == 0f){
-                                    it.positionY = height - this.bottomEdg
+                                if (this.bottomEdg == 1f){
+                                    if (this.topEdge == 0f){
+                                        it.positionY = height - it.height
+                                    }else{
+                                        it.positionY = height - it.height
+                                    }
                                 }else{
-                                    it.positionY = height - this.bottomEdg
+                                    if (this.topEdge == 0f){
+                                        it.positionY = height - this.bottomEdg  - it.height
+                                    }else{
+                                        it.positionY = height - this.bottomEdg - it.height
+                                    }
+                                }
+
+
+                            }*/
+
+
+
+                            //按照下边距为准
+                            if (this.topEdge != 0f && this.topEdge != 1f){
+                                it.positionY = 0f + this.topEdge
+                            }else{
+                                if (this.bottomEdg != 0f && this.bottomEdg != 1f){
+                                    it.positionY = height - this.bottomEdg - it.height
+                                }else{
+                                    if (this.bottomEdg == 1f){
+                                        it.positionY = height - it.height
+                                    }else{
+                                        it.positionY = 0f
+                                    }
+
                                 }
                             }
+
+
+
+
                         }
 
                         位置.垂直居中 ->{
@@ -529,7 +629,7 @@ class Drawer(
                                 if (this.rightEdg == 0f){
                                     it.positionX = 0f
                                 }else{
-                                    it.positionX = width - this.rightEdg
+                                    it.positionX = width - this.rightEdg - it.width
                                 }
                             }else{
                                 if (this.rightEdg == 0f){
@@ -658,7 +758,7 @@ class Drawer(
 
     private fun textPacket(type: WorkType, it: TextComponentBean, idPaint: String): TextBean {
         val forFontMetrics =  painterMap[idPaint]!!.fontMetrics;
-        val height = (forFontMetrics.descent - forFontMetrics.ascent);
+        val height = (forFontMetrics.top);
         return TextBean(
             type,
             ComponentType.TEXT,

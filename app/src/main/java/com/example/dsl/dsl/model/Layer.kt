@@ -118,12 +118,12 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
                                 canvas.save()
                                 canvas.translate(bean.textPositionX,bean.textPositionY)
                                 canvas.drawText(bean.text,0f,0f,bean.paint)
-                                Log.e(TAG, "drawAll: ${bean.toString()}")
+
                                 canvas.restore()
                             }else{
                                 canvas.save()
                                 canvas.translate(bean.textPositionX,bean.textPositionY)
-                                Log.e(TAG, "drawAll: ${bean.toString()}")
+
                                 canvas.drawTextOnPath(bean.text,bean.textPath,0f,0f,bean.paint)
                                 canvas.restore()
                             }
