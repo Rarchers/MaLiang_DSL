@@ -70,19 +70,25 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 drawer {
 
                    // "relative" 画在 位置.正中 使用画笔 "invoke"
-                    "designed" 画在 位置.正中 使用画笔 "default"
-                   // "picture" 画在 位置.正中 使用画笔 "invoke"
+                    "designed" 画在 位置.垂直居中 使用画笔 "default"
+                   // "picture" 画在 位置.垂直居中 使用画笔 "invoke"
                     //relative 实验性 当前API已完成
                    //  "center_circle" 画在 位置.正中 使用画笔  "painters" // 中心定位点
 
 
-
-                    "center_circle" 画在 "designed" 下方 0f 使用画笔 "rarcher"
-                    "picture" 画在 "designed" 下方 0f 使用画笔 "rarcher"
-                    "designed" 画在 "designed" 下方 0f 使用画笔 "rarcher"
+                   // "designed" 画在 "picture" 右方 0f 使用画笔 "rarcher"
+                   // "designed" 画在 "designed" 右方 0f 使用画笔 "rarcher"
 
 
-                     "center_circle" 画在 位置.正中  使用画笔  "painters" // 中心定位点
+                    "picture" 画在 "designed" 右方 0f 使用画笔 "rarcher"
+
+                    "center_circle" 画在 "picture" 右方 0f 使用画笔 "rarcher"
+                    "relative" 画在 "center_circle" 右方 0f 使用画笔 "rarcher"
+
+                   // "designed" 画在 "designed" 下方 0f 使用画笔 "rarcher"
+
+
+                   //  "center_circle" 画在 位置.正中  使用画笔  "painters" // 中心定位点
                 }
             }
         }

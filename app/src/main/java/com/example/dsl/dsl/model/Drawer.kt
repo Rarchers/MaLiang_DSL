@@ -387,13 +387,16 @@ class Drawer(
                             this.positionX = bean.textPositionX + right
                         } else {
                             when (this.component) {
-                                ComponentType.TEXT, ComponentType.PICTURE -> {
-                                    this.positionX =
-                                        bean.textPositionX + bean.BeanWidth!! / 2  + right
+                                ComponentType.TEXT -> {
+                                    this.positionX = bean.textPositionX + bean.BeanWidth!!  + right
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionX =
                                         bean.textPositionX + this.BeanWidth!! / 2  + right
+                                }
+                                ComponentType.PICTURE ->{
+                                    this.positionX =
+                                        bean.textPositionX + bean.BeanWidth!! / 2  + right
                                 }
                                 else -> {
                                     this.positionX =
@@ -412,13 +415,16 @@ class Drawer(
                         } else {
 
                             when (this.component) {
-                                ComponentType.TEXT, ComponentType.PICTURE -> {
+                                ComponentType.TEXT -> {
                                     this.positionX = bean.positionX + bean.r + right
 
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionX = bean.positionX + this.BeanWidth!! + right
 
+                                }
+                                ComponentType.PICTURE ->{
+                                    this.positionX = bean.positionX + bean.r + right
                                 }
                                 else -> {
                                     this.positionX =
@@ -436,10 +442,10 @@ class Drawer(
                         } else {
                             when (this.component) {
                                 ComponentType.TEXT -> {
-                                    this.positionX = bean.positionX + right
+                                    this.positionX = bean.positionX + right + bean.BeanWidth!!
                                 }
                                 ComponentType.CIRCLE -> {
-                                    this.positionX = bean.positionX + this.BeanWidth!! / 2 + right
+                                    this.positionX = bean.positionX + this.BeanWidth!! / 2 + right + bean.BeanWidth!!
 
                                 }
                                 ComponentType.PICTURE -> {
