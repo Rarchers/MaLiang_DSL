@@ -18,7 +18,7 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
     private val painterMap = HashMap<String,Paint>().also {
         val paint = Paint()
         paint.color = Color.RED
-        paint.textSize = 50f
+        paint.textSize = 1f
         paint.textAlign = Paint.Align.CENTER;
         it["default"] = paint
     }
@@ -68,6 +68,7 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
 
                         ComponentType.TEXT ->{
                             val bean = work as TextBean
+                            Log.e(TAG, "drawAll: painterAlign ${bean.paint.textAlign}", )
                             if (bean.textPath == null){
                                 canvas.save()
                                 canvas.translate(bean.textPositionX,bean.textPositionY)
@@ -114,6 +115,7 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
 
                         ComponentType.TEXT ->{
                             val bean = core as TextBean
+                            Log.e(TAG, "drawAll: painterAlign ${bean.paint.textAlign}", )
                             if (bean.textPath == null){
                                 canvas.save()
                                 canvas.translate(bean.textPositionX,bean.textPositionY)

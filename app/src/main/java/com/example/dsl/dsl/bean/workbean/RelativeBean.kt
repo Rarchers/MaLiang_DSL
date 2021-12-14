@@ -1,6 +1,7 @@
 package com.example.dsl.dsl.bean.workbean
 
 import android.graphics.Paint
+import com.example.dsl.dsl.emun.AligenType
 import com.example.dsl.dsl.emun.ComponentType
 import com.example.dsl.dsl.emun.WorkType
 import com.example.dsl.dsl.emun.位置
@@ -8,6 +9,7 @@ import com.example.dsl.dsl.emun.位置
 class RelativeBean(type: WorkType, component: ComponentType) : WorkBean(type, component) {
     var relativeId : String = ""
     var place : 位置 = 位置.默认
+    var aligen : AligenType = AligenType.默认
     var pathStr : String = ""
     var paint : Paint? = null
     var topEdge : Float = 0f
@@ -17,6 +19,8 @@ class RelativeBean(type: WorkType, component: ComponentType) : WorkBean(type, co
     var positionX : Float = 0f
     var positionY : Float = 0f
     var core : WorkBean? = null
+    var positionXDeque : ArrayDeque<PositionQueue> = ArrayDeque()
+    var positionYDeque : ArrayDeque<PositionQueue> = ArrayDeque()
     override var BeanHeight: Float? = null
     override var BeanWidth: Float? = null
 }

@@ -1,15 +1,14 @@
 package com.example.dsl.dsl.model
 
-import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.PathMeasure
 import android.graphics.Rect
 import android.util.Log
 import com.example.dsl.dsl.bean.componentbean.*
 import com.example.dsl.dsl.bean.workbean.*
-import com.example.dsl.dsl.emun.ComponentType
-import com.example.dsl.dsl.emun.WorkType
-import com.example.dsl.dsl.emun.位置
+import com.example.dsl.dsl.emun.*
+import com.example.dsl.dsl.model.layout.Column
+import com.example.dsl.dsl.model.layout.Row
+import com.example.dsl.dsl.utils.initTag
 import java.lang.Exception
 import kotlin.math.abs
 
@@ -24,10 +23,43 @@ class Drawer(
     val TAG = "Drawer"
 
     val coreMap: HashMap<String, WorkBean> = HashMap()
+    val rowQueue = ArrayDeque<Pair<String,String>>()
+    val rowLayout = Row(rowQueue)
+    val columnLayout = Column()
+
+
+    // LinearLayout
+
+
+    //Row
+    fun row(positionY : Float,block: Row.() -> Unit){
+        initTag(rowLayout,block)
+        dealRowQueue(positionY)
+    }
+
+    fun dealRowQueue(positionY: Float){
+        //1.创建一个1像素的定位点
+        pathMap["!@#$%index%$#@!"] = CycleComponentBean(type = ComponentType.CIRCLE,1f).also{
+            it.positionX = 0f
+            it.positionY = positionY
+        }
+
+        "!@#$%index%$#@!".画在(位置.默认).使用画笔("default")
+
+
+
+        //2.开始绘制
+        var curStr = "!@#$%index%$#@!"
+        while (rowQueue.isNotEmpty()){
+            val str = rowQueue.removeFirst()
+            str.first.画在(curStr) 右方(0f) 使用画笔 str.second
+            curStr = str.first
+        }
+    }
 
 
     /**
-     * TODO 实验性
+     *
      * relative Layout
      */
     infix fun String.画在(pathId: String): RelativeBean {
@@ -37,13 +69,14 @@ class Drawer(
         var relativeBean: RelativeBean? = null
         when (pathMap[this]!!.type) {
             ComponentType.TEXT -> {
+                //TODO : 罪魁祸首，错误的paint导致了错误的宽度计算！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
                 val forFontMetrics = painterMap["default"]!!.fontMetrics;
                 val height = (forFontMetrics.descent - forFontMetrics.ascent);
                 relativeBean = RelativeBean(WorkType.CHINESE, ComponentType.TEXT)
                 relativeBean.pathStr = this
-                relativeBean.BeanHeight = height
-                relativeBean.BeanWidth =
-                    painterMap["default"]!!.measureText((pathMap[this]!! as TextComponentBean).text)
+                relativeBean.BeanHeight = 0f
+                relativeBean.BeanWidth = 0f
+//                    painterMap["default"]!!.measureText((pathMap[this]!! as TextComponentBean).text)
             }
             ComponentType.PATH -> {
                 relativeBean = RelativeBean(WorkType.CHINESE, ComponentType.PATH)
@@ -84,7 +117,7 @@ class Drawer(
                         } else {
                             this.positionX = bean.positionX - this.BeanWidth!! - left
                         }
-                        this.positionY = 0f
+                        this.positionY = bean.positionY
                     }
 
                     ComponentType.TEXT -> {
@@ -95,19 +128,42 @@ class Drawer(
                             when (this.component) {
                                 ComponentType.TEXT, ComponentType.PICTURE -> {
                                     this.positionX =
-                                        bean.textPositionX - bean.BeanWidth!! / 2 - this.BeanWidth!! - left
+                                        bean.textPositionX - bean.BeanWidth!! / 2  - left
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_WIDTH
+                                    }
+                                    this.positionXDeque.add(xdeque)
+
+
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionX =
-                                        bean.textPositionX - bean.BeanWidth!! / 2 - this.BeanWidth!! / 2 - left
+                                        bean.textPositionX - bean.BeanWidth!! / 2  - left
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_WIDTH
+                                        it.scale = 0.5
+                                    }
+                                    this.positionXDeque.add(xdeque)
+
                                 }
                                 else -> {
                                     this.positionX =
-                                        bean.textPositionX - bean.BeanWidth!! / 2 - this.BeanWidth!! - left
+                                        bean.textPositionX - bean.BeanWidth!! / 2 - left
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_WIDTH
+                                    }
+                                    this.positionXDeque.add(xdeque)
+
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        this.positionY = bean.textPositionY
 
                     }
 
@@ -133,7 +189,7 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        this.positionY = bean.positionY
                     }
 
                     ComponentType.PICTURE -> {
@@ -154,11 +210,12 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        this.positionY = bean.positionY
                     }
                 }
             }
         }
+        this.aligen = AligenType.左边
         return this
     }
 
@@ -175,7 +232,7 @@ class Drawer(
                         } else {
                             this.positionY = bean.positionY - this.BeanHeight!! - top
                         }
-                        this.positionX = 0f
+                        this.positionX = bean.positionX
                     }
 
                     ComponentType.TEXT -> {
@@ -186,21 +243,81 @@ class Drawer(
                         } else {
                             when (this.component) {
                                 ComponentType.TEXT-> {
-                                    this.positionY = bean.textPositionY - top - abs(forFontMetrics.ascent)
+                                    this.positionY = bean.textPositionY - top
+
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.ASCENT
+                                    }
+                                    this.positionYDeque.add(xdeque)
                                 }
                                 ComponentType.CIRCLE -> {
-                                    this.positionY = bean.textPositionY + abs(forFontMetrics.descent)  - top - abs(forFontMetrics.top) - this.BeanHeight!!/2
+                                    this.positionY = bean.textPositionY - top
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.DESCENT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+
+                                    val xdeque1 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.TOP
+                                    }
+                                    this.positionYDeque.add(xdeque1)
+
+                                    val xdeque2 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_HEIGHT
+                                        it.scale = 0.5
+                                    }
+                                    this.positionYDeque.add(xdeque2)
+
+
+
+
                                 }
                                 ComponentType.PICTURE ->{
                                     this.positionY = bean.textPositionY + abs(forFontMetrics.descent) - top - abs(forFontMetrics.top) - this.BeanHeight!!
+
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.DESCENT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+                                    val xdeque1 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.TOP
+                                    }
+                                    this.positionYDeque.add(xdeque1)
+
+                                    val xdeque2 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_HEIGHT
+                                    }
+                                    this.positionYDeque.add(xdeque2)
+
+
                                 }
                                 else -> {
                                     this.positionY =
-                                        bean.textPositionY - bean.BeanHeight!! / 2 - this.BeanHeight!! - top
+                                        bean.textPositionY - bean.BeanHeight!! / 2  - top
+
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_HEIGHT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.textPositionX
 
                     }
 
@@ -230,7 +347,7 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.positionX
                     }
 
                     ComponentType.PICTURE -> {
@@ -255,11 +372,12 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.positionX
                     }
                 }
             }
         }
+        this.aligen = AligenType.上边
         return this
     }
 
@@ -276,7 +394,7 @@ class Drawer(
                         } else {
                             this.positionY = bean.positionY + this.BeanHeight!! + bottom
                         }
-                        this.positionX = 0f
+                        this.positionX = bean.positionX
                     }
 
                     ComponentType.TEXT -> {
@@ -287,21 +405,73 @@ class Drawer(
                         } else {
                             when (this.component) {
                                 ComponentType.TEXT-> {
-                                    this.positionY = bean.textPositionY + bottom + abs(forFontMetrics.ascent)
+                                    this.positionY = bean.textPositionY + bottom
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.DESCENT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+
                                 }
                                 ComponentType.CIRCLE -> {
-                                    this.positionY = bean.textPositionY + bottom  + this.BeanHeight!!/2 +  (abs(forFontMetrics.descent - forFontMetrics.bottom))*2
+                                    this.positionY = bean.textPositionY + bottom
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.THIS_HEIGHT
+                                        it.scale = 0.5
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+                                    val xdeque1 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.DESCENT
+                                        it.scale = 2.0
+                                    }
+                                    this.positionYDeque.add(xdeque1)
+
+                                    val xdeque2 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.BOTTOM
+                                        it.scale = 2.0
+                                    }
+                                    this.positionYDeque.add(xdeque2)
+
                                 }
                                 ComponentType.PICTURE ->{
-                                    this.positionY = bean.textPositionY + bottom +  (abs(forFontMetrics.descent - forFontMetrics.bottom))*2
+                                    this.positionY = bean.textPositionY + bottom
+
+                                    val xdeque1 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.DESCENT
+                                        it.scale = 2.0
+                                    }
+                                    this.positionYDeque.add(xdeque1)
+
+                                    val xdeque2 =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.BOTTOM
+                                        it.scale = 2.0
+                                    }
+                                    this.positionYDeque.add(xdeque2)
+
+
                                 }
                                 else -> {
                                     this.positionY =
-                                        bean.textPositionY + bean.BeanHeight!! / 2 + this.BeanHeight!! + bottom
+                                        bean.textPositionY + bean.BeanHeight!! / 2  + bottom
+
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.THIS_HEIGHT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.textPositionX
 
                     }
 
@@ -313,9 +483,15 @@ class Drawer(
 
                             when (this.component) {
                                 ComponentType.TEXT ->{
-                                    val forFontMetrics = painterMap["default"]!!.fontMetrics;
+
                                     this.positionY =
-                                        bean.positionY  + bean.r + bottom + abs(forFontMetrics.ascent)
+                                        bean.positionY  + bean.r + bottom
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.ASCENT
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
 
                                 }
                                 ComponentType.CIRCLE -> {
@@ -331,7 +507,7 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.positionX
                     }
 
                     ComponentType.PICTURE -> {
@@ -356,14 +532,14 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionX = width / 2 * 1f
+                        this.positionX = bean.positionX
                     }
                 }
             }
         }
+        this.aligen = AligenType.下边
         return this
     }
-
 
     infix fun RelativeBean.右方(right: Float): RelativeBean {
         val work = coreMap[this.relativeId] ?: throw Exception("未找到相应Core,请检查Relative顺序")
@@ -378,25 +554,53 @@ class Drawer(
                         } else {
                             this.positionX = bean.positionX + this.BeanWidth!! + right
                         }
-                        this.positionY = 0f
+                        Log.e(TAG, "右方: A" )
+                        this.positionY = bean.positionY
                     }
 
-                    ComponentType.TEXT -> {
+                    ComponentType.TEXT -> { //基于 Text进行调整的数据
                         val bean = core as TextBean
                         if (this.BeanWidth == null) {
                             this.positionX = bean.textPositionX + right
                         } else {
                             when (this.component) {
                                 ComponentType.TEXT -> {
-                                    this.positionX = bean.textPositionX + bean.BeanWidth!!  + right
+                                    this.positionX = bean.textPositionX + bean.BeanWidth!!/2 + right
+                                    Log.e(TAG, "右方: B1 bean:{position ${bean.textPositionX} width ${bean.BeanWidth}}", )
+                                    
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.THIS_WIDTH
+                                        it.scale = 0.5
+                                    }
+                                    this.positionXDeque.add(xdeque)
+                                    Log.e(TAG, "右方: B1", )
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionX =
-                                        bean.textPositionX + this.BeanWidth!! / 2  + right
+                                        bean.textPositionX  + right
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.THIS_WIDTH
+                                        it.scale = 0.5
+                                    }
+                                    this.positionXDeque.add(xdeque)
+                                    Log.e(TAG, "右方: B2", )
                                 }
                                 ComponentType.PICTURE ->{
-                                    this.positionX =
-                                        bean.textPositionX + bean.BeanWidth!! / 2  + right
+                                    this.positionX = bean.textPositionX + bean.BeanWidth!!/2  + right
+
+                                    val xdeque =  PositionQueue(PositionTag.NUM).also {
+                                        it.positive = 0
+                                        it.num = this.BeanHeight!!
+                                        Log.e(TAG, "右方: B3 height ${this.BeanHeight} width ${this.BeanWidth}", )
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+
+
+
+                                    Log.e(TAG, "右方: B3", )
                                 }
                                 else -> {
                                     this.positionX =
@@ -404,8 +608,15 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        Log.e(TAG, "右方: B" )
+                        this.positionY = bean.textPositionY
 
+                       /* val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                            it.positive = 0
+                            it.step = PositionTag.THIS_HEIGHT
+                            it.scale = 0.5
+                        }
+                        this.positionYDeque.add(xdeque)*/
                     }
 
                     ComponentType.CIRCLE -> {
@@ -417,14 +628,30 @@ class Drawer(
                             when (this.component) {
                                 ComponentType.TEXT -> {
                                     this.positionX = bean.positionX + bean.r + right
-
+                                    Log.e(TAG, "右方: C1", )
+                                    Log.e(TAG, "右方: C1 positionX : ${this.positionX}", )
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 1
+                                        it.step = PositionTag.THIS_WIDTH
+                                        it.scale = 0.5
+                                    }
+                                    this.positionXDeque.add(xdeque)
                                 }
                                 ComponentType.CIRCLE -> {
-                                    this.positionX = bean.positionX + this.BeanWidth!! + right
+                                    this.positionX = bean.positionX  + right
+                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+                                        it.positive = 0
+                                        it.step = PositionTag.THIS_WIDTH
+                                    }
+                                    this.positionXDeque.add(xdeque)
+
+
+                                    Log.e(TAG, "右方: C2", )
 
                                 }
                                 ComponentType.PICTURE ->{
                                     this.positionX = bean.positionX + bean.r + right
+                                    Log.e(TAG, "右方: C3", )
                                 }
                                 else -> {
                                     this.positionX =
@@ -432,7 +659,8 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        Log.e(TAG, "右方: C" )
+                        this.positionY = bean.positionY
                     }
 
                     ComponentType.PICTURE -> {
@@ -446,6 +674,14 @@ class Drawer(
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionX = bean.positionX + this.BeanWidth!! / 2 + right + bean.BeanWidth!!
+                                    val xdeque =  PositionQueue(PositionTag.NUM).also {
+                                        it.positive = 1
+                                        it.num = bean.BeanHeight!! - this.BeanWidth!!/2
+                                    }
+                                    this.positionYDeque.add(xdeque)
+
+
+
 
                                 }
                                 ComponentType.PICTURE -> {
@@ -456,13 +692,52 @@ class Drawer(
                                 }
                             }
                         }
-                        this.positionY = height / 2 * 1f
+                        Log.e(TAG, "右方: D" )
+                        this.positionY = bean.positionY
+
+
+
                     }
                 }
             }
         }
+        this.aligen = AligenType.右边
         return this
     }
+
+
+    infix fun RelativeBean.上边距(top: Float) : RelativeBean{
+        if (this.aligen == AligenType.上边 || this.aligen == AligenType.下边)
+            return this
+        else
+            this.topEdge = top
+        return this
+    }
+
+    infix fun RelativeBean.下边距(bottom: Float) : RelativeBean{
+        if (this.aligen == AligenType.上边 || this.aligen == AligenType.下边)
+            return this
+        else
+            this.bottomEdg = bottom
+        return this
+    }
+
+    infix fun RelativeBean.左边距(left: Float) : RelativeBean{
+        if (this.aligen == AligenType.左边 || this.aligen == AligenType.右边)
+            return this
+        else
+            this.leftEdg = left
+        return this
+    }
+
+    infix fun RelativeBean.右边距(right: Float) : RelativeBean{
+        if (this.aligen == AligenType.左边 || this.aligen == AligenType.右边)
+            return this
+        else
+            this.rightEdg = right
+        return this
+    }
+
 
 
     infix fun RelativeBean.使用画笔(paintId: String) {
@@ -486,7 +761,89 @@ class Drawer(
             ComponentType.TEXT -> {
                 //文字绘制
                 val bean = pathMap[this.pathStr]!! as TextComponentBean
+
+                val forFontMetrics = painterMap[paintId]!!.fontMetrics
+                val height = (forFontMetrics.descent - forFontMetrics.ascent)
+
+
+
                 bean.let {
+                    while (this.positionXDeque.isNotEmpty()){
+                        val tag = this.positionXDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.MEASURE){
+                            when(tag.step){
+                                PositionTag.THIS_HEIGHT ->{
+                                    this.positionX += (height*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.THIS_WIDTH ->{
+                                    this.positionX += (painterMap[paintId]!!.measureText((pathMap[this.pathStr]!! as TextComponentBean).text)*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.TOP ->{
+                                    this.positionX += (abs(forFontMetrics.top)*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.ASCENT ->{
+                                    this.positionX += (abs(forFontMetrics.ascent*positive*tag.scale)).toFloat()
+                                }
+                                PositionTag.BOTTOM ->{
+                                    this.positionX += (abs(forFontMetrics.bottom*positive*tag.scale)).toFloat()
+                                }
+                                PositionTag.DESCENT ->{
+                                    this.positionX += (abs(forFontMetrics.descent*positive*tag.scale)).toFloat()
+                                }
+
+                            }
+                        }else if (tag.TAG == PositionTag.NUM){
+                            this.positionX += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+                    }
+
+                    while (this.positionYDeque.isNotEmpty()){
+                        val tag = this.positionYDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.MEASURE){
+                            when(tag.step){
+                                PositionTag.THIS_HEIGHT ->{
+                                    this.positionY += (height*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.THIS_WIDTH ->{
+                                    this.positionY += (painterMap[paintId]!!.measureText((pathMap[this.pathStr]!! as TextComponentBean).text)*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.TOP ->{
+                                    this.positionY += (abs(forFontMetrics.top)*tag.scale*positive).toFloat()
+                                }
+                                PositionTag.ASCENT ->{
+                                    this.positionY += (abs(forFontMetrics.ascent*positive*tag.scale)).toFloat()
+                                }
+                                PositionTag.BOTTOM ->{
+                                    this.positionY += (abs(forFontMetrics.bottom*positive*tag.scale)).toFloat()
+                                }
+                                PositionTag.DESCENT ->{
+                                    this.positionY += (abs(forFontMetrics.descent*positive*tag.scale)).toFloat()
+                                }
+                            }
+                        }else if (tag.TAG == PositionTag.NUM){
+                            this.positionY += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+
+
+
+
+
+
+
+
+
+
+                    }
+
+
                     it.textPositionX = this.positionX
                     it.textPositionY = this.positionY
                     chineseBean.core = textPacket(WorkType.FREE, it, paintId)
@@ -505,6 +862,28 @@ class Drawer(
             ComponentType.CIRCLE -> {
                 val bean = (pathMap[this.pathStr]!! as CycleComponentBean)
                 bean.let {
+                    while (this.positionXDeque.isNotEmpty()){
+                        val tag = this.positionXDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.NUM){
+                            this.positionX += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+                    }
+
+                    while (this.positionYDeque.isNotEmpty()){
+                        val tag = this.positionYDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.NUM){
+                            this.positionY += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+
+                    }
                     it.positionX = this.positionX
                     it.positionY = this.positionY
                     chineseBean.core = cyclePacket(WorkType.FREE, it, paintId)
@@ -512,8 +891,32 @@ class Drawer(
             }
 
             ComponentType.PICTURE -> {
+
                 val bean = (pathMap[this.pathStr]!! as PictureComponentBean)
                 bean.let {
+
+                    while (this.positionXDeque.isNotEmpty()){
+                        val tag = this.positionXDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.NUM){
+                            this.positionX += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+                    }
+
+                    while (this.positionYDeque.isNotEmpty()){
+                        val tag = this.positionYDeque.removeFirst()
+
+                        val positive = if (tag.positive == 0) -1 else 1
+
+                        if (tag.TAG == PositionTag.NUM){
+                            this.positionY += (tag.num * positive * tag.scale).toFloat()
+                        }
+
+
+                    }
                     it.positionX = this.positionX
                     it.positionY = this.positionY
                     chineseBean.core = picPacket(WorkType.FREE, it, paintId)
@@ -991,8 +1394,14 @@ class Drawer(
             }
 
         }
-        coreMap[this.pathStr] = this
-        workQueue.add(this)
+        if (this.pathStr == "!@#$%index%$#@!"){
+            coreMap[this.pathStr] = this
+        }else{
+            coreMap[this.pathStr] = this
+            workQueue.add(this)
+        }
+
+
     }
 
 

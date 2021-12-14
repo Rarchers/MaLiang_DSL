@@ -1,15 +1,18 @@
 package com.example.dsl.dsl.model
 
 import android.graphics.Paint
+import android.util.Log
 
 class PainterCustom(private val painterMap :HashMap<String, Paint>) {
 
+    val TAG = "PainterCustom"
     fun addPaint(id:String,paint: Paint){
-        painterMap[id] = paint
+        painterMap[id] = paint.also { it.textAlign = Paint.Align.CENTER}
     }
 
     fun addPaint(id:String){
         val paint = Paint()
+        paint.textAlign = Paint.Align.CENTER
         painterMap[id] = paint
     }
 
@@ -19,12 +22,14 @@ class PainterCustom(private val painterMap :HashMap<String, Paint>) {
 
 
     fun String.painter(block : ()->Paint){
-        painterMap[this] = block()
+        painterMap[this] = block().also { it.textAlign = Paint.Align.CENTER }
+
     }
 
 
     operator fun String.invoke(block : ()->Paint){
-        painterMap[this] = block()
+        painterMap[this] = block().also { it.textAlign = Paint.Align.CENTER }
+        Log.e(TAG, "invoke: ${painterMap[this]!!.textAlign}", )
     }
 
 
