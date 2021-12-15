@@ -157,6 +157,7 @@ class Drawer(
                                     val xdeque =  PositionQueue(PositionTag.MEASURE).also {
                                         it.positive = 0
                                         it.step = PositionTag.THIS_WIDTH
+                                        it.scale = 0.5
                                     }
                                     this.positionXDeque.add(xdeque)
 
@@ -267,14 +268,14 @@ class Drawer(
                         } else {
                             when (this.component) {
                                 ComponentType.TEXT-> {
-                                    this.positionY = bean.textPositionY - top
+                                    this.positionY = bean.textPositionY - top - abs(forFontMetrics.ascent)
 
 
-                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
-                                        it.positive = 0
-                                        it.step = PositionTag.ASCENT
-                                    }
-                                    this.positionYDeque.add(xdeque)
+//                                    val xdeque =  PositionQueue(PositionTag.MEASURE).also {
+//                                        it.positive = 0
+//                                        it.step = PositionTag.ASCENT
+//                                    }
+//                                    this.positionYDeque.add(xdeque)
                                 }
                                 ComponentType.CIRCLE -> {
                                     this.positionY = bean.textPositionY - top
