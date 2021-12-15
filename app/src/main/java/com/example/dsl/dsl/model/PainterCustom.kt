@@ -29,7 +29,7 @@ class PainterCustom(private val painterMap :HashMap<String, Paint>) {
 
     operator fun String.invoke(block : ()->Paint){
         painterMap[this] = block().also { it.textAlign = Paint.Align.CENTER }
-        Log.e(TAG, "invoke: ${painterMap[this]!!.textAlign}", )
+      //  Log.e(TAG, "invoke: ${painterMap[this]!!.textAlign}", )
     }
 
 

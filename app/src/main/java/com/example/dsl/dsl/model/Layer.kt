@@ -115,7 +115,7 @@ class Layer(val canvas: Canvas,val height:Int,val width:Int){
 
                         ComponentType.TEXT ->{
                             val bean = core as TextBean
-                            Log.e(TAG, "drawAll: painterAlign ${bean.paint.textAlign}", )
+                           // Log.e(TAG, "drawAll: painterAlign ${bean.paint.textAlign}", )
                             if (bean.textPath == null){
                                 canvas.save()
                                 canvas.translate(bean.textPositionX,bean.textPositionY)

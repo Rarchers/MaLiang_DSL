@@ -33,7 +33,7 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val TAG = "DSLView"
     val paint = Paint().apply {
         this.color = Color.RED
-        this.textSize = 50f
+        this.textSize = 30f
        // this.textAlign = Paint.Align.CENTER
         //this.textAlign = Paint.Align.CENTER;
     }
@@ -71,32 +71,39 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     picture("picture", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.icon),100f,100f)
                     text("designed","文字基准测试")
                     text("rowLayout","横向布局测试")
-                    circle("center_circle",10f)
+                    circle("center_circle",10f,positionX = width/2.0f,positionY = height/2.0f)
                     circle("positions",1f,0f,height/2*1f)
                 }
                 drawer {
 
-                  //  "relative" 画在 位置.正中 使用画笔 "invoke"
-//                    "relative" 画在 位置.左上角 使用画笔 "invoke"
-//                    "relative" 画在 "relative" 右方 0f 使用画笔 "invoke"
-//                    "rowLayout" 画在 "relative" 右方 0f 使用画笔 "invoke"
+               //     "center_circle" 画在 位置.默认 使用画笔 "default"
 
+  //                  "relative" 画在 位置.左上角 使用画笔 "invoke"
+                //   "designed" 画在 "center_circle" 下方 0f 使用画笔 "rarcher"
+//                    "rowLayout" 画在 "relative" 下方 0f 使用画笔 "invoke"
+//                    "picture" 画在 "rowLayout" 下方 0f 使用画笔 "invoke"
 
-                  //  "!@#$%index%$#@!".画在(位置.默认).使用画笔("default")
+                   // "!@#$%index%$#@!".画在(位置.默认).使用画笔("default")
 //                    "positions" 画在 位置.垂直居中 使用画笔 "default"
 //                    "designed" 画在 "positions" 右方 0f 使用画笔 "rarcher"
 //                    "rowLayout" 画在 "designed" 右方 0f 使用画笔 "painters"
 //                    "picture" 画在 "rowLayout" 右方 0f 使用画笔 "rarcher"
 
 
+//
+//                    row(height/2 *1f) {
+//                        addComponent("designed","rarcher")
+//                        addComponent("rowLayout","painters")
+//                        addComponent("picture","rarcher")
+//                        addComponent("center_circle","rarcher")
+//                    }
 
-                    row(positionY = height/2 *1f) {
+                    column(width/2 *1f,0f) {
                         addComponent("designed","rarcher")
                         addComponent("rowLayout","painters")
                         addComponent("picture","rarcher")
                         addComponent("center_circle","rarcher")
                     }
-
 
 
                    //  "center_circle" 画在 位置.正中  使用画笔  "painters" // 中心定位点
