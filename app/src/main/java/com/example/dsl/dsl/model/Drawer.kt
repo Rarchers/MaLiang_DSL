@@ -746,37 +746,47 @@ class Drawer(
     }
 
 
-    infix fun RelativeBean.上边距(top: Float) : RelativeBean{
-        if (this.aligen == AligenType.上边 || this.aligen == AligenType.下边)
-            return this
-        else
-            this.topEdge = top
+    infix fun RelativeBean.上移(top: Float) : RelativeBean{
+        val move =  PositionQueue(PositionTag.NUM).also {
+            it.positive = 0
+            it.num = top
+        }
+        this.positionYDeque.add(move)
+
         return this
     }
 
-    infix fun RelativeBean.下边距(bottom: Float) : RelativeBean{
-        if (this.aligen == AligenType.上边 || this.aligen == AligenType.下边)
-            return this
-        else
-            this.bottomEdg = bottom
+    infix fun RelativeBean.下移(bottom:Float) : RelativeBean{
+        val move =  PositionQueue(PositionTag.NUM).also {
+            it.positive = 1
+            it.num = bottom
+        }
+        this.positionYDeque.add(move)
         return this
     }
 
-    infix fun RelativeBean.左边距(left: Float) : RelativeBean{
-        if (this.aligen == AligenType.左边 || this.aligen == AligenType.右边)
-            return this
-        else
-            this.leftEdg = left
+    infix fun RelativeBean.左移(left:Float) : RelativeBean{
+
+
+        val move = PositionQueue(PositionTag.NUM).also {
+            it.positive = 0
+            it.num = left
+        }
+        this.positionXDeque.addFirst(move)
+
         return this
     }
 
-    infix fun RelativeBean.右边距(right: Float) : RelativeBean{
-        if (this.aligen == AligenType.左边 || this.aligen == AligenType.右边)
-            return this
-        else
-            this.rightEdg = right
+    infix fun RelativeBean.右移(right: Float) : RelativeBean{
+        val move = PositionQueue(PositionTag.NUM).also {
+            it.positive = 1
+            it.num = right
+        }
+
+        this.positionXDeque.addFirst(move)
         return this
     }
+
 
 
 

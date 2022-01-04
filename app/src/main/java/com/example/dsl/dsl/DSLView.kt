@@ -13,18 +13,7 @@ import com.example.dsl.dsl.utils.layer
 
 
 
-/**
-*
-* Relative Layout：
- * 1. 新增更多绘制描述
- * 2. 更多的放置测试，目前已经完成 圆的相对布局测试
-*
-*
-* */
 
-
-//TODO : 因为预设定Text的画笔，导致错误计算了positionX和positionY 需要进行修改
-//TODO ：修正方法： 在 左边 后边等前置计算position的时候，使用标记来记录positionX和positionY的偏移，后期进行二次测量后再代入值
 
 
 class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -80,10 +69,10 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                     //相对布局 测试组
                     "relativeCenter" 画在 位置.水平居中 下边距 200f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 上方 5f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 下方 5f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 右方 5f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 左方 5f 使用画笔 "invoke"
+                    "relative" 画在 "relativeCenter" 上方 5f 右移 50f 使用画笔 "invoke"
+                    "relative" 画在 "relativeCenter" 下方 5f 左移 50f 使用画笔 "invoke"
+                    "relative" 画在 "relativeCenter" 右方 5f 下移 50f 使用画笔 "invoke"
+                    "relative" 画在 "relativeCenter" 左方 5f 上移 50f 使用画笔 "invoke"
 
 
                     //横向布局 测试组
@@ -110,34 +99,13 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
         invalidate()
-
     }
 
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-    }
 
-    fun initPath(){
-        warringPath.moveTo(
-          0f,0f
-        )
-        warringPath.lineTo(
-            (backgroundHeight / 2 - backgroundHeight / 18).toFloat(),
-            (backgroundHeight * 7 / 12 - backgroundHeight / 18).toFloat()
-        )
-        warringPath.lineTo(
-            (backgroundHeight / 2 + backgroundHeight / 18).toFloat(),
-            (backgroundHeight * 7 / 12 - backgroundHeight / 18).toFloat()
-        )
-        warringPath.lineTo(
-            (backgroundHeight / 2 + backgroundHeight / 12).toFloat(),
-            (backgroundHeight / 3 - backgroundHeight / 12).toFloat()
-        )
-        warringPath.lineTo(
-            (backgroundHeight / 2 - backgroundHeight / 12).toFloat(),
-            (backgroundHeight / 3 - backgroundHeight / 12).toFloat()
-        )
-    }
+
+
+
+
 }
