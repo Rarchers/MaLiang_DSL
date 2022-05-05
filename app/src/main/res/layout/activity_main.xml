@@ -9,8 +9,9 @@
 
     <view
         android:id="@+id/view"
-        class="com.example.dsl.dsl.DSLView"
+        class="com.example.dsl.dsl.CustomView"
         android:layout_width="match_parent"
+        android:background="@color/teal_700"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="132dp"
         tools:layout_editor_absoluteY="311dp" />
