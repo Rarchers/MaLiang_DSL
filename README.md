@@ -1,6 +1,17 @@
 # MaLiang_DSL
 
-#### 注：本模块暂未进行最终版本打包，因此暂未提供gradle引入路径
+###请切换到layout分支使用
+
+#如何使用
+gradle：
+
+在build.gradle内添加：
+ maven { url 'https://jitpack.io' }
+
+
+在dependency内使用 
+implementation 'com.github.Rarchers:MaLiang_DSL:v1.0'
+
 
 
 ## 简介
