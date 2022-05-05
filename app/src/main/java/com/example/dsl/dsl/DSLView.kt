@@ -23,12 +23,14 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     val paint = Paint().apply {
         this.color = Color.RED
         this.textSize = 30f
-       // this.textAlign = Paint.Align.CENTER
-        //this.textAlign = Paint.Align.CENTER;
     }
     val paint2 = Paint()
     val invokePaint = Paint()
-    val warringPath = Path()
+    val addTicket = Paint()
+    val path = Path()
+    val background = Paint()
+    val ball = Paint()
+    val backgroundPath = Path()
 
 
 
@@ -36,67 +38,58 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        initPath()
         if (canvas != null) {
 
-            layer(canvas = canvas,height,width) {
+            layer(canvas = canvas,height,width){
                 painters {
-                    "invoke"{
-                        invokePaint.color = Color.RED
-                        invokePaint.textSize = 30f
-                       // invokePaint.textAlign = Paint.Align.CENTER
-                        invokePaint
+                    "addTicket"{
+                        addTicket.color = Color.BLACK
+                        addTicket.textSize = 25f
+                        addTicket.textAlign = Paint.Align.CENTER
+                        addTicket
                     }
-                    "painters".painter {
-                        paint2.color = Color.BLACK
-                        paint2.textAlign = Paint.Align.CENTER
+                    "background"{
+                        background.color = Color.WHITE
+                        background
+                    }
+                    "ball"{
+                        ball.color = Color.YELLOW
+                        ball
+                    }
+                    "posPaint"{
+                        paint2.color = Color.RED
                         paint2
                     }
-                    addPaint("rarcher",paint)
                 }
-
                 component {
-
-                    text("relative","相对布局测试")
-                    picture("picture", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.icon),100f,100f)
-                    text("designed","文字基准测试")
-                    text("rowLayout","横向布局测试")
-                    text("relativeCenter","相对布局中心")
-                    text("columnLayout","纵向布局测试")
-                    circle("center_circle",10f,positionX = width/2.0f,positionY = height/2.0f)
-                    circle("positions",1f,0f,height/2*1f)
+                    picture("title", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.title),width*1f,500f)
+                    picture("item", BitmapFactory.decodeResource(this@DSLView.resources,R.drawable.item),width*1f,200f)
+                    path("yellowBackground",path,width*1f/2-200f,height*1f-80f)
+                    circle("balls",30f)
+                    circle("pos",10f)
+                    text("addgrab","添加抢票")
                 }
                 drawer {
-
-                    //相对布局 测试组
-                    "relativeCenter" 画在 位置.水平居中 下边距 200f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 上方 5f 右移 50f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 下方 5f 左移 50f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 右方 5f 下移 50f 使用画笔 "invoke"
-                    "relative" 画在 "relativeCenter" 左方 5f 上移 50f 使用画笔 "invoke"
-
-
-                    //横向布局 测试组
-                    row(0f,height/2 *1f) {
-                        addComponent("designed","rarcher")
-                        addComponent("rowLayout","painters")
-                        addComponent("picture","rarcher")
-                        addComponent("center_circle","rarcher")
+                    "title" 画在 位置.水平居中 使用画笔 "background"
+                    column(0f,500f){
+                        addComponent("item","background")
+                        addComponent("item","background")
+                        addComponent("item","background")
+                        addComponent("item","background")
                     }
-
-                    //纵向布局 测试组
-                    column(width/2 *1f,0f) {
-                        addComponent("designed","rarcher")
-                        addComponent("columnLayout","painters")
-                        addComponent("picture","rarcher")
-                        addComponent("center_circle","rarcher")
-                    }
-
-
-
-
-                   //  "center_circle" 画在 位置.正中  使用画笔  "painters" // 中心定位点
+                    drawComponent("ball","yellowBackground")
+                    "pos" 画在 位置.水平居中 下边距 40f 使用画笔 "ball"
+                    "balls" 画在 "pos" 左方 100f+30f 使用画笔 "ball"
+                    "balls" 画在 "pos" 右方 200f 使用画笔 "ball"
+                    "addgrab" 画在 位置.水平居中 下边距 38f 使用画笔 "addTicket"
                 }
             }
+
+
+
+
+
         }
         invalidate()
     }
@@ -104,6 +97,14 @@ class DSLView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
 
 
+    fun initPath(){
+        path.moveTo(0f,0f)
+        path.lineTo(400f,0f)
+        path.lineTo(400f,60f)
+        path.lineTo(0f,60f)
+        path.close()
+
+    }
 
 
 

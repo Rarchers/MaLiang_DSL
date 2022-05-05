@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "DSL"
 include ':app'
+include ':app:maliangDSL'
